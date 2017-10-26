@@ -1,3 +1,4 @@
+/*
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
@@ -76,23 +77,23 @@ class App extends Component {
                             </h3>
                         </AccordionItemTitle>
                         <AccordionItemBody>
-
+                            <Accordion accordion={false}>
+                                <AccordionItem>
+                                    <AccordionItemTitle>
+                                        <h3 className="u-position-relative">
                                             {item.author.map((auth, index) =>
-                                              <Accordion accordion={false} onClick={alert("Success")}>
-                                                <AccordionItem>
-                                                  <AccordionItemTitle>
-                                                    <h3 className="u-position-relative">
-                                                      {auth.given + " " + auth.family}
-                                                      <div className="accordion__arrow" role="presentation" />
-                                                    </h3>
-                                                  </AccordionItemTitle>
-                                                  <AccordionItemBody>
-                                                    <p>Test4</p>
-                                                  </AccordionItemBody>
-                                                </AccordionItem>
-                                              </Accordion>
+                                                <li key={index}>{auth.given + " " + auth.family}</li>
                                             )}
+                                            <div className="accordion__arrow" role="presentation" />
+                                        </h3>
+                                    </AccordionItemTitle>
+                                    <AccordionItemBody>
+                        <p>Test4</p>
+                                    </AccordionItemBody>
+                                </AccordionItem>
 
+                                
+                            </Accordion>
                         </AccordionItemBody>
                     </AccordionItem>
                 </Accordion>
