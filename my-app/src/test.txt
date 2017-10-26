@@ -1,0 +1,101 @@
+import React, { Component } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import Request from 'superagent';
+import _ from 'lodash';
+//import api from './api';
+
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemTitle,
+  AccordionItemBody,
+} from 'react-accessible-accordion';
+
+import './react-accessible-accordion.css';
+
+
+class App extends Component {
+    constructor(props){
+    super(props);
+    this.state = {
+      data: [],
+      items: "",
+      titles: "",
+      authors: "",
+      activeItems: [0, 1],
+    };
+    this.changeActiveItems = this.changeActiveItems.bind(this);
+   }
+
+    changeActiveItems(activeItems) {
+      this.setState({
+        activeItems,
+      });
+    }
+
+    componentWillMount(){
+
+
+
+    }
+
+    updateSearch(){
+      this.search(this.refs.query.value);
+    }
+
+    search(query = "surgery"){
+        var url = `https://api.crossref.org/works?query.title=${query}&rows=5&mailto=workaintfun@yahoo.com`;
+        return fetch(url).then((response) => response.json()).then((response) => {
+        this.setState({
+          data: response,
+          items: response.message.items,
+          titles: response.message.items[0].title,
+          authors: response.message.items[0].author
+        })
+      });
+    }
+
+    render(){
+      console.log("Data", this.state.data);
+      console.log("Items", this.state.items);
+      console.log("Title: ", this.state.items.title);
+      console.log("author", this.state.items.author);
+      var authors = _.map(this.state.items.author, (author) => {
+        return <li key={author.id}>{author.given + author.family}</li>;
+      });
+      var items = _.map(this.state.items, (item) => {
+        return (
+          <Accordion>
+        <AccordionItem>
+            <AccordionItemTitle>
+                <h3>{item.title}</h3>
+            </AccordionItemTitle>
+            <AccordionItemBody>
+                <p>
+                      <li></li>
+                </p>
+            </AccordionItemBody>
+          </AccordionItem>
+        </Accordion>
+
+
+
+          );
+      });
+
+      return (
+        <div>Hello
+        <input ref="query" onChange={ (e) => {this.updateSearch();}} type="text" />
+        <ul>{items}</ul>
+        <ul>{authors}</ul>
+        </div>
+
+        );
+    }
+
+}
+  
+
+
+export default App;
