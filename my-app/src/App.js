@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import Collapsible from 'react-collapsible';
 
+import './sass/test.css';
+
 
 
 class App extends Component {
@@ -35,11 +37,38 @@ class App extends Component {
 
     }
 
+    componentDidMount(){
+      this.collapseRender();
+    }
+
+    collapseRender(){
+      const message = this.state.items;
+      const AuthorList = message.map((item, index) => {
+        if(item.author == undefined){
+          this.setState({
+            item: []
+          });} else {
+        const AuthorList = test.map((item, index) =>{
+        return (
+          <div>
+                            <Collapsible trigger={item.title} key={index} lazyRender={true}>
+                                            {item.author.map((auth, index) =>
+                                                      <Collapsible trigger={auth.given + " " + auth.family}>
+                                                          <button key={index} onClick={ (e) => this.handleClick(e, (auth.given + "+" + auth.family).toLowerCase())}>TestButton</button>
+                                                          {this.state.titleList}
+                                                      </Collapsible>)}
+                            </Collapsible>
+          </div>
+        )
+      });}})
+    }
+
+
     updateSearch(){
       this.search(this.refs.query.value);
     }
 
-    search(query = "health"){
+    search(query = ""){
       var url =`https://api.crossref.org/works?query.title=${query}&rows=5&mailto=workaintfun@yahoo.com`;
       return fetch(url).then((response) => response.json()).then((response) => {
         this.setState({
@@ -51,14 +80,14 @@ class App extends Component {
     }
 
     search_by_author(query = ""){
-      var url =`https://api.crossref.org/works?query.author=${query}&rows=1&mailto=@yahoo.com`;
+      var url =`https://api.crossref.org/works?query.author=${query}&rows=5&mailto=@yahoo.com`;
       fetch(url).then((response) => response.json()).then((response) => {
         this.setState({
           authors: response.message.items
         });
         const author = this.state.authors;
         const titleList = author.map((titl, index) => {
-          return (<li>{titl.title}</li>)
+          return (<li className="coolList">{titl.title}</li>)
         });
         this.setState({
           titleList: titleList
@@ -71,37 +100,21 @@ class App extends Component {
     render(){
       console.log("Data", this.state.data.message);
       console.log("Items", this.state.items);
-
-      const test = this.state.items;
-      const testList = test.map((item, index) => {
-        return (
-            <li key={index}>{item.title}</li>
-          )
-      })
-      const AuthorList = test.map((item, index) =>{
-        return (
-          <div>
-                            <Collapsible trigger={item.title} key={index} lazyRender={true}>
-                                            {item.author.map((auth, index) =>
-                                                      <Collapsible trigger={auth.given + " " + auth.family}>
-                                                          <button key={index} onClick={ (e) => this.handleClick(e, (auth.given + "+" + auth.family).toLowerCase())}>TestButton</button>
-                                                          {this.state.titleList}
-                                                      </Collapsible>)}
-                            </Collapsible>
-          </div>
-        )
-      })
+      console.log("Items2", this.state.items.author);
 
       return (
         <div>
+        <div className="searchInput">
         <input ref="query" onChange={ (e) => {this.updateSearch();}} type="text" />
+        </div>
           <div>
           {
             <div>
-            {AuthorList}
+            {this.collapseRender();}
             </div>
           }
           </div>
+
         </div>);
     }
 }
