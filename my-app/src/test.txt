@@ -1,32 +1,27 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import Request from 'superagent';
-import _ from 'lodash';
-//import api from './api';
+import Collapsible from 'react-collapsible';
 
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-} from 'react-accessible-accordion';
-
-import './react-accessible-accordion.css';
 
 
 class App extends Component {
     constructor(props){
     super(props);
+    this.onClick = this.handleClick.bind(this);
     this.state = {
       data: [],
-      items: "",
-      titles: "",
-      authors: "",
+      items: [],
+      title: "",
+      authors: [],
       activeItems: [0, 1],
     };
     this.changeActiveItems = this.changeActiveItems.bind(this);
    }
+
+    handleClick(event, query) {
+      const {id} = event.target;
+      this.search_by_author(query)
+    }
 
     changeActiveItems(activeItems) {
       this.setState({
@@ -35,7 +30,7 @@ class App extends Component {
     }
 
     componentWillMount(){
-
+      this.search();
 
 
     }
@@ -44,56 +39,69 @@ class App extends Component {
       this.search(this.refs.query.value);
     }
 
-    search(query = "surgery"){
-        var url = `https://api.crossref.org/works?query.title=${query}&rows=5&mailto=workaintfun@yahoo.com`;
-        return fetch(url).then((response) => response.json()).then((response) => {
+    search(query = "health"){
+      var url =`https://api.crossref.org/works?query.title=${query}&rows=5&mailto=workaintfun@yahoo.com`;
+      return fetch(url).then((response) => response.json()).then((response) => {
         this.setState({
           data: response,
-          items: response.message.items,
-          titles: response.message.items[0].title,
-          authors: response.message.items[0].author
-        })
+          items: response.message.items
+        });
       });
+
     }
 
+    search_by_author(query = ""){
+      var url =`https://api.crossref.org/works?query.author=${query}&rows=1&mailto=workaintfun@yahoo.com`;
+      fetch(url).then((response) => response.json()).then((response) => {
+        this.setState({
+          authors: response.message.items
+        });
+        const author = this.state.authors;
+        console.log("Author", author);
+        const titleList = author.map((titl, index) => {
+          return (<li>{titl.title}</li>)
+        });
+      return titleList
+      });
+
+    }
+
+
     render(){
-      console.log("Data", this.state.data);
+      console.log("Data", this.state.data.message);
       console.log("Items", this.state.items);
-      console.log("Title: ", this.state.items.title);
-      console.log("author", this.state.items.author);
-      var authors = _.map(this.state.items.author, (author) => {
-        return <li key={author.id}>{author.given + author.family}</li>;
-      });
-      var items = _.map(this.state.items, (item) => {
+
+      const test = this.state.items;
+      const testList = test.map((item, index) => {
         return (
-          <Accordion>
-        <AccordionItem>
-            <AccordionItemTitle>
-                <h3>{item.title}</h3>
-            </AccordionItemTitle>
-            <AccordionItemBody>
-                <p>
-                      <li></li>
-                </p>
-            </AccordionItemBody>
-          </AccordionItem>
-        </Accordion>
-
-
-
-          );
-      });
+            <li key={index}>{item.title}</li>
+          )
+      })
+      const AuthorList = test.map((item, index) =>{
+        return (
+          <div>
+                            <Collapsible trigger={item.title} key={index} lazyRender={true}>
+                                            {item.author.map((auth, index) =>
+                                                      <Collapsible trigger={auth.given + " " + auth.family}>
+                                                          <button onClick={ (e) => this.handleClick(e, (auth.given + "+" + auth.family).toLowerCase())}>TestButton</button>
+                                                      </Collapsible>)}
+                            </Collapsible>
+          </div>
+        )
+      })
 
       return (
         <div>Hello
         <input ref="query" onChange={ (e) => {this.updateSearch();}} type="text" />
-        <ul>{items}</ul>
-        <ul>{authors}</ul>
-        </div>
-
-        );
+          <div>
+          {
+            <div>
+            {AuthorList}
+            </div>
+          }
+          </div>
+        </div>);
     }
-
 }
   
 

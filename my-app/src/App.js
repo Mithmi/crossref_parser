@@ -1,31 +1,27 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import Request from 'superagent';
-import _ from 'lodash';
+import Collapsible from 'react-collapsible';
 
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemTitle,
-  AccordionItemBody,
-} from 'react-accessible-accordion';
-
-import './react-accessible-accordion.css';
 
 
 class App extends Component {
     constructor(props){
     super(props);
+    this.onClick = this.handleClick.bind(this);
     this.state = {
       data: [],
       items: [],
       title: "",
-      author: [],
+      authors: [],
       activeItems: [0, 1],
     };
     this.changeActiveItems = this.changeActiveItems.bind(this);
    }
+
+    handleClick(event, query) {
+      const {id} = event.target;
+      this.search_by_author(query)
+    }
 
     changeActiveItems(activeItems) {
       this.setState({
@@ -54,6 +50,24 @@ class App extends Component {
 
     }
 
+    search_by_author(query = ""){
+      var url =`https://api.crossref.org/works?query.author=${query}&rows=1&mailto=@yahoo.com`;
+      fetch(url).then((response) => response.json()).then((response) => {
+        this.setState({
+          authors: response.message.items
+        });
+        const author = this.state.authors;
+        const titleList = author.map((titl, index) => {
+          return (<li>{titl.title}</li>)
+        });
+        this.setState({
+          titleList: titleList
+        });
+      });
+
+    }
+
+
     render(){
       console.log("Data", this.state.data.message);
       console.log("Items", this.state.items);
@@ -67,48 +81,24 @@ class App extends Component {
       const AuthorList = test.map((item, index) =>{
         return (
           <div>
-             <Accordion>
-                    <AccordionItem>
-                        <AccordionItemTitle>
-                            <h3 className="u-position-relative" key={index}>
-                                {item.title}
-                                <div className="accordion__arrow" role="presentation" />
-                            </h3>
-                        </AccordionItemTitle>
-                        <AccordionItemBody>
-
+                            <Collapsible trigger={item.title} key={index} lazyRender={true}>
                                             {item.author.map((auth, index) =>
-                                              <Accordion accordion={false} onClick={alert("Success")}>
-                                                <AccordionItem>
-                                                  <AccordionItemTitle>
-                                                    <h3 className="u-position-relative">
-                                                      {auth.given + " " + auth.family}
-                                                      <div className="accordion__arrow" role="presentation" />
-                                                    </h3>
-                                                  </AccordionItemTitle>
-                                                  <AccordionItemBody>
-                                                    <p>Test4</p>
-                                                  </AccordionItemBody>
-                                                </AccordionItem>
-                                              </Accordion>
-                                            )}
-
-                        </AccordionItemBody>
-                    </AccordionItem>
-                </Accordion>
+                                                      <Collapsible trigger={auth.given + " " + auth.family}>
+                                                          <button key={index} onClick={ (e) => this.handleClick(e, (auth.given + "+" + auth.family).toLowerCase())}>TestButton</button>
+                                                          {this.state.titleList}
+                                                      </Collapsible>)}
+                            </Collapsible>
           </div>
         )
       })
 
       return (
-        <div>Hello
+        <div>
         <input ref="query" onChange={ (e) => {this.updateSearch();}} type="text" />
           <div>
           {
             <div>
-            <ul>{testList}</ul>
             {AuthorList}
-
             </div>
           }
           </div>
