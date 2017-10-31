@@ -1,25 +1,26 @@
 .button {
 	line-height: 16px;
-	background-color: #339999;
+	background-color: #7db8da;
 }
 
 .coolList {
-    background: #339999;
-    margin: 0;
+    background: #7db8da;
+    text-align: left;
     padding: 5;
 }
 
 .searchInput {
-    width: 100%;
     text-align:center;
 }
 
 .collaps {
-	background-color: #339999;
+	background-color: #7db8da;
 
 }
 
 .Collapsible {
+  max-width: 800px;
+  margin: auto;
 	background: $base;
 }
 

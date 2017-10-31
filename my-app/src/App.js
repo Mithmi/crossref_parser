@@ -38,30 +38,35 @@ class App extends Component {
     }
 
     componentDidMount(){
-      this.collapseRender();
+
     }
 
-    collapseRender(){
+
+
+
+    titleRender(){
       const message = this.state.items;
-      const AuthorList = message.map((item, index) => {
-        if(item.author == undefined){
-          this.setState({
-            item: []
-          });} else {
-        const AuthorList = test.map((item, index) =>{
-        return (
+      //console.log("Message titleRender", message);
+      return ( message.map((item, index) => 
           <div>
-                            <Collapsible trigger={item.title} key={index} lazyRender={true}>
-                                            {item.author.map((auth, index) =>
-                                                      <Collapsible trigger={auth.given + " " + auth.family}>
-                                                          <button key={index} onClick={ (e) => this.handleClick(e, (auth.given + "+" + auth.family).toLowerCase())}>TestButton</button>
-                                                          {this.state.titleList}
-                                                      </Collapsible>)}
+                            <Collapsible trigger={item.title} key={index} lazyRender={true} className="collaps">
+                                {this.authorRender()}
                             </Collapsible>
-          </div>
-        )
-      });}})
+          </div>)
+      );
     }
+
+    authorRender(){
+      const message = this.state.items;
+      //console.log("Message authorRender", message);
+      return ( message.map((item, index) => { return (
+        (item.author || []).map((auth, index) =>
+
+                            <Collapsible trigger={auth.given + " " + auth.family} className="collaps">
+                                <button key={index} className="button" onClick={ (e) => this.handleClick(e, (auth.given + "+" + auth.family).toLowerCase())}>Show author articles</button>
+                                {this.state.titleList}
+                            </Collapsible>))}));
+  }
 
 
     updateSearch(){
@@ -100,19 +105,14 @@ class App extends Component {
     render(){
       console.log("Data", this.state.data.message);
       console.log("Items", this.state.items);
-      console.log("Items2", this.state.items.author);
 
       return (
         <div>
-        <div className="searchInput">
-        <input ref="query" onChange={ (e) => {this.updateSearch();}} type="text" />
-        </div>
           <div>
-          {
-            <div>
-            {this.collapseRender();}
-            </div>
-          }
+            <input ref="query" onChange={ (e) => {this.updateSearch();}} type="text" />
+          </div>
+          <div>
+            {this.titleRender()}
           </div>
 
         </div>);

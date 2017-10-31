@@ -9,12 +9,14 @@ $darkred: #c80e3d;
   }
 }
 
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
 body {
-  max-width: 800px;
-  margin: auto;
-  padding: 0;
   font-family: sans-serif;
-  background: #99FFFF;
 }
 
 
@@ -129,3 +131,29 @@ body {
   color: #333;
   line-height: 1.3;
 }
+
+.header {
+  position: relative;
+  display: table;
+  width: 100%;
+  height: 100%;
+  background: url(./img/bg.jpg) no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.text-vertical-center {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.text-vertical-center h1 {
+  font-size: 4.5em;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+}
+
